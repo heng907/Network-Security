@@ -1,0 +1,27 @@
+FROM debian:latest
+
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    wget \
+    python3
+
+WORKDIR /build
+
+RUN wget https://github.com/curl/curl/releases/download/curl-7_74_0/curl-7.74.0.tar.gz
+
+RUN tar -xzvf curl-7.74.0.tar.gz
+
+WORKDIR /build/curl-7.74.0
+
+RUN ./configure --with-openssl
+
+RUN make -j$(nproc)
+
+RUN make install
+
+RUN cp -r /usr/local/lib /usr/lib
+
+RUN ldconfig
+
+ENTRYPOINT [ "/bin/bash"]
